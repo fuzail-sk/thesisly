@@ -1,35 +1,46 @@
-# AlgoChowk Research Assistant
+# Thesisly
 
-An AI-assisted market research prototype that turns a natural-language trading question into a structured, testable experiment.
+### Every market question deserves a test.
 
-## Problem
+Thesisly is an experimental market research platform that transforms ambiguous natural-language trading questions into structured, testable experiments.
 
-A question such as:
+Instead of immediately running a backtest, Thesisly first identifies ambiguity, clarifies assumptions, and converts a market hypothesis into a well-defined experiment.
 
-> "Does buying NIFTY after a sharp fall work?"
+It combines natural-language understanding with deterministic backtesting to help users investigate market behavior through structured experimentation.
 
-sounds simple, but it is ambiguous.
+---
 
-What is a "sharp fall"?  
-When should the position be entered?  
-How long should it be held?  
-When should it be exited?
+## The Problem
 
-This prototype addresses that ambiguity before running a backtest.
+A question like:
 
-## Product Workflow
+> Does buying NIFTY after a sharp fall work?
 
-The application follows:
+sounds simple, but it leaves several important questions unanswered:
+
+- What qualifies as a sharp fall?
+- When should the position be entered?
+- How long should it be held?
+- When should the position be exited?
+- What historical period should be tested?
+
+Without clearly defining these parameters, a backtest can produce misleading results.
+
+**Thesisly addresses this problem by making assumptions explicit before testing begins.**
+
+---
+
+## How It Works
+
+Thesisly follows a five-stage workflow:
 
 **ASK → CLARIFY → DEFINE → TEST → LEARN**
 
-### 1. ASK
+### 1. ASK — Express a market hypothesis
+Users enter research questions in natural language without needing to define every technical parameter upfront.
 
-The user enters a market research question in natural language.
-
-### 2. CLARIFY
-
-The AI interprets the question and identifies missing parameters such as:
+### 2. CLARIFY — Identify ambiguity
+The language model interprets the question and identifies missing experimental parameters, including:
 
 - Instrument
 - Timeframe
@@ -39,78 +50,102 @@ The AI interprets the question and identifies missing parameters such as:
 - Exit condition
 - Test period
 
-The application presents suggested assumptions that the user can change.
+Suggested assumptions are presented for user review and modification.
 
-### 3. DEFINE
+### 3. DEFINE — Structure the experiment
+The confirmed assumptions are converted into a structured experiment definition.
+Users can review the conditions before proceeding.
 
-The confirmed assumptions are converted into a structured experiment.
+### 4. TEST — Run a deterministic backtest
+A JavaScript backtesting engine evaluates the experiment against the available dataset.
+The language model does not calculate the numerical backtest results.
 
-The user reviews the experiment before testing.
+### 5. LEARN — Interpret the observations
+Thesisly presents the results and explains what they indicate, along with their limitations.
+A positive result is not automatically treated as evidence of a reliable trading strategy.
 
-### 4. TEST
+---
 
-A deterministic JavaScript backtest engine runs the experiment.
+## Example Experiment
 
-The LLM does not calculate the numerical results.
+**Research Question:**
 
-For the prototype experiment:
+Does buying NIFTY after a sharp fall generate positive returns?
 
-- Instrument: NIFTY
-- Timeframe: Daily
-- Sharp fall: 2% or more
-- Entry: Next trading day's open
-- Holding period: 5 trading days
-- Exit: Close after the holding period
-- Dataset: Local prototype sample
+The prototype converts this question into the following experiment:
 
-### 5. LEARN
+| Parameter | Definition |
+|---|---|
+| Instrument | NIFTY |
+| Timeframe | Daily |
+| Sharp fall | 2% or more |
+| Entry | Next trading day's open |
+| Holding period | 5 trading days |
+| Exit | Close after holding period |
+| Dataset | Local prototype sample |
 
-The application summarizes what the results suggest and, importantly, what they do not prove.
+### Prototype Results
 
-For example, a 100% win rate in a tiny sample is not treated as proof of a reliable trading edge.
+| Metric | Result |
+|---|---:|
+| Qualifying events | 4 |
+| Average return | 2.39% |
+| Median return | 2.33% |
+| Win rate | 100% |
+| Best return | 3.35% |
+| Worst return | 1.55% |
 
-## Example Result
+**Important:** These figures come from a small local prototype dataset. Four qualifying events are insufficient to establish statistical significance or demonstrate a reliable trading edge.
 
-The prototype dataset produced:
+---
 
-- 4 qualifying events
-- Average return: 2.39%
-- Median return: 2.33%
-- Win rate: 100%
-- Best return: 3.35%
-- Worst return: 1.55%
+## Key Features
 
-These results are only observations from the prototype dataset.
+- Natural-language market research questions.
+- AI-assisted interpretation and ambiguity detection.
+- Interactive experiment parameter clarification.
+- Structured experiment definitions.
+- Deterministic JavaScript backtesting.
+- Performance metric calculations.
+- Result interpretation with explicit limitations.
 
-The sample is too small to establish a reliable statistical edge.
+---
 
-## Tech Stack
+## Technology Stack
 
 ### Frontend
-
-- React
+- React.js
 - Vite
 - CSS
 
 ### Backend
-
 - Node.js
 - Express.js
 
-### AI
-
+### Language Model
 - Google Gemini API
 
-The AI is used for natural-language interpretation and ambiguity detection.
+### Backtesting Engine
+- JavaScript
+- Deterministic experiment execution
 
-### Backtesting
+---
 
-A deterministic JavaScript backtest engine processes the dataset and calculates returns.
+## Architecture Overview
+
+Thesisly separates natural-language interpretation from numerical backtest execution.
+
+The language model assists with understanding and structuring experiments, while the deterministic engine handles calculations.
+
+This separation helps keep numerical results reproducible and independent of language-model-generated calculations.
+
+---
 
 ## Project Structure
 
 ```text
-algochowk-research/
+thesisly/
+│
 ├── client/
 │   └── src/
 │       ├── components/
@@ -124,3 +159,81 @@ algochowk-research/
     ├── utils/
     ├── data/
     └── server.js
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- npm
+- Google Gemini API key
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/fuzail-sk/thesisly.git
+cd thesisly
+```
+
+Install dependencies in the client and server directories:
+
+```bash
+cd client
+npm install
+```
+
+```bash
+cd ../server
+npm install
+```
+
+Configure the required environment variables according to the server configuration.
+
+Start the frontend and backend using the scripts defined in their respective `package.json` files.
+
+---
+
+## Current Project Status
+
+**Experimental Prototype**
+
+Thesisly demonstrates an approach to converting ambiguous market research questions into structured and testable experiments.
+
+Current limitations include:
+
+- Uses a local prototype dataset.
+- Limited number of qualifying historical events.
+- Not connected to a verified live market-data feed.
+- Backtest results are not evidence of future performance.
+- Transaction costs, slippage and other market frictions should be considered before drawing broader conclusions.
+
+---
+
+## Future Improvements
+
+- Integration with reliable historical market-data sources.
+- Support for additional instruments and timeframes.
+- Expanded experiment conditions and exit strategies.
+- More comprehensive backtesting and statistical analysis.
+- Transaction costs and slippage modelling.
+- Experiment history and comparison.
+- Improved visualization of backtest results.
+
+---
+
+## Project Philosophy
+
+A market hypothesis should never be tested without clearly defining what is being tested.
+
+Thesisly aims to make market research more structured, transparent and reproducible.
+
+---
+
+**Built by Shaikh Fuzail**
+
+[GitHub](https://github.com/fuzail-sk)
